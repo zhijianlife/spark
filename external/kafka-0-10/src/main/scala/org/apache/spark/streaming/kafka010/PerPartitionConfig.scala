@@ -18,7 +18,6 @@
 package org.apache.spark.streaming.kafka010
 
 import org.apache.kafka.common.TopicPartition
-
 import org.apache.spark.SparkConf
 import org.apache.spark.annotation.Experimental
 
@@ -29,22 +28,24 @@ import org.apache.spark.annotation.Experimental
  */
 @Experimental
 abstract class PerPartitionConfig extends Serializable {
-  /**
-   *  Maximum rate (number of records per second) at which data will be read
-   *  from each Kafka partition.
-   */
-  def maxRatePerPartition(topicPartition: TopicPartition): Long
-  def minRatePerPartition(topicPartition: TopicPartition): Long = 1
+    /**
+     * Maximum rate (number of records per second) at which data will be read
+     * from each Kafka partition.
+     */
+    def maxRatePerPartition(topicPartition: TopicPartition): Long
+
+    def minRatePerPartition(topicPartition: TopicPartition): Long = 1
 }
 
 /**
  * Default per-partition configuration
  */
-private class DefaultPerPartitionConfig(conf: SparkConf)
-    extends PerPartitionConfig {
-  val maxRate = conf.getLong("spark.streaming.kafka.maxRatePerPartition", 0)
-  val minRate = conf.getLong("spark.streaming.kafka.minRatePerPartition", 1)
+private class DefaultPerPartitionConfig(conf: SparkConf) extends PerPartitionConfig {
 
-  def maxRatePerPartition(topicPartition: TopicPartition): Long = maxRate
-  override def minRatePerPartition(topicPartition: TopicPartition): Long = minRate
+    val maxRate = conf.getLong("spark.streaming.kafka.maxRatePerPartition", 0)
+    val minRate = conf.getLong("spark.streaming.kafka.minRatePerPartition", 1)
+
+    def maxRatePerPartition(topicPartition: TopicPartition): Long = maxRate
+
+    override def minRatePerPartition(topicPartition: TopicPartition): Long = minRate
 }
